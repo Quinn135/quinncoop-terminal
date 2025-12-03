@@ -49,7 +49,7 @@ const fileSystem = new Map([
 ])
 
 function ls() {
-    var returnStr = "<span class='flex flex-row flex-wrap gap-x-3'>";
+    var returnStr = "<span class='flex flex-row flex-wrap gap-x-3'><p style='color: LightGreen'>(folders blue, files white)</p>&nbsp;";
     fileSystem.forEach((elem, path) => {
         if (elem.type == "file") {
             var filePath = path.slice(0, path.indexOf(elem.fileName) - 1);
@@ -337,5 +337,7 @@ window.addEventListener("keydown", (e) => {
         log.appendChild(divResult);
 
         dirElem.textContent = dir;
+        
+        window.scrollTo(0, document.body.scrollHeight);
     }
 })
