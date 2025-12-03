@@ -17,34 +17,33 @@ var logs = [];
 var dir = "/";
 
 const fileSystem = new Map([
-    ["/", { type: "folder", children: ["sites"] }],
-    ["/sites", { type: "folder", children: ["alloew.com", "quinncoop.com"] }],
+    ["/", { type: "folder" }],
+    ["/sites", { type: "folder" }],
     ["/sites/quinncoop.com", { type: "folder", fileName: undefined, children: ["index", "b", "images", "old", "scroll", ""] }],
-    ["/sites/quinncoop.com/main", { type: "file", fileName: "main", content: "https://index.quinncoop.com/" }],
-    ["/sites/quinncoop.com/b", { type: "file", fileName: "b", content: "https://b.quinncoop.com/" }],
-    ["/sites/quinncoop.com/images", { type: "file", fileName: "images", content: "https://imagesquinncoop.com/" }],
-    ["/sites/quinncoop.com/old", { type: "file", fileName: "old", content: "https://old.quinncoop.com/" }],
-    ["/sites/quinncoop.com/scroll", { type: "file", fileName: "scroll", content: "https://scroll.quinncoop.com/" }],
-    ["/sites/quinncoop.com/hi", { type: "file", fileName: "2025", content: "https://hi.quinncoop.com/" }],
+    ["/sites/quinncoop.com/index.html", { type: "file", fileName: "index.html", content: "https://quinncoop.com/" }],
+    ["/sites/quinncoop.com/b.html", { type: "file", fileName: "b.html", content: "https://b.quinncoop.com/" }],
+    ["/sites/quinncoop.com/images.html", { type: "file", fileName: "images.html", content: "https://images.quinncoop.com/" }],
+    ["/sites/quinncoop.com/old.html", { type: "file", fileName: "old.html", content: "https://old.quinncoop.com/" }],
+    ["/sites/quinncoop.com/scroll.html", { type: "file", fileName: "scroll.html", content: "https://scroll.quinncoop.com/" }],
+    ["/sites/quinncoop.com/hi.html", { type: "file", fileName: "hi.html", content: "https://hi.quinncoop.com/" }],
     ["/sites/alloew.com", {
-        type: "folder", fileName: undefined, children: ["index", "airlift", "bob", "confetti", "emoji", "hi", "jacob",
-            "shmurplelurplepurple", "spend", "think", "time", "w", "b", "weeb", "words"]
+        type: "folder", fileName: undefined
     }],
-    ["/sites/alloew.com/main", { type: "file", fileName: "main", content: "https://alloew.com/" }],
-    ["/sites/alloew.com/airlift", { type: "file", fileName: "airlift", content: "https://airlift.alloew.com/" }],
-    ["/sites/alloew.com/bob", { type: "file", fileName: "bob", content: "https://bob.alloew.com/" }],
-    ["/sites/alloew.com/confetti", { type: "file", fileName: "confetti", content: "https://confetti.alloew.com/" }],
-    ["/sites/alloew.com/emoji", { type: "file", fileName: "emoji", content: "https://emoji.alloew.com/" }],
-    ["/sites/alloew.com/hi", { type: "file", fileName: "hi", content: "https://hi.alloew.com/" }],
-    ["/sites/alloew.com/jacob", { type: "file", fileName: "jacob", content: "https://jacob.alloew.com/" }],
-    ["/sites/alloew.com/shmurplelurplepurple", { type: "file", fileName: "shmurplelurplepurple", content: "https://shmurplelurplepurple.alloew.com/" }],
-    ["/sites/alloew.com/spend", { type: "file", fileName: "spend", content: "https://spend.alloew.com/" }],
-    ["/sites/alloew.com/think", { type: "file", fileName: "think", content: "https://think.alloew.com/" }],
-    ["/sites/alloew.com/time", { type: "file", fileName: "time", content: "https://time.alloew.com/" }],
-    ["/sites/alloew.com/w", { type: "file", fileName: "w", content: "https://w.alloew.com/" }],
-    ["/sites/alloew.com/b", { type: "file", fileName: "b", content: "https://b.alloew.com/" }],
-    ["/sites/alloew.com/weeb", { type: "file", fileName: "weeb", content: "https://weeb.alloew.com/" }],
-    ["/sites/alloew.com/words", { type: "file", fileName: "words", content: "https://words.alloew.com/" }],
+    ["/sites/alloew.com/index.html", { type: "file", fileName: "index.html", content: "https://alloew.com/" }],
+    ["/sites/alloew.com/airlift.html", { type: "file", fileName: "airlift.html", content: "https://airlift.alloew.com/" }],
+    ["/sites/alloew.com/bob.html", { type: "file", fileName: "bob.html", content: "https://bob.alloew.com/" }],
+    ["/sites/alloew.com/confetti.html", { type: "file", fileName: "confetti.html", content: "https://confetti.alloew.com/" }],
+    ["/sites/alloew.com/emoji.html", { type: "file", fileName: "emoji.html", content: "https://emoji.alloew.com/" }],
+    ["/sites/alloew.com/hi.html", { type: "file", fileName: "hi.html", content: "https://hi.alloew.com/" }],
+    ["/sites/alloew.com/jacob.html", { type: "file", fileName: "jacob.html", content: "https://jacob.alloew.com/" }],
+    ["/sites/alloew.com/purple.html", { type: "file", fileName: "purple.html", content: "https://shmurplelurplepurple.alloew.com/" }],
+    ["/sites/alloew.com/spend.html", { type: "file", fileName: "spend.html", content: "https://spend.alloew.com/" }],
+    ["/sites/alloew.com/think.html", { type: "file", fileName: "think.html", content: "https://think.alloew.com/" }],
+    ["/sites/alloew.com/time.html", { type: "file", fileName: "time.html", content: "https://time.alloew.com/" }],
+    ["/sites/alloew.com/w.html", { type: "file", fileName: "w.html", content: "https://w.alloew.com/" }],
+    ["/sites/alloew.com/b.html", { type: "file", fileName: "b.html", content: "https://b.alloew.com/" }],
+    ["/sites/alloew.com/weeb.html", { type: "file", fileName: "weeb.html", content: "https://weeb.alloew.com/" }],
+    ["/sites/alloew.com/words.html", { type: "file", fileName: "words.html", content: "https://words.alloew.com/" }],
 
 ])
 
@@ -123,64 +122,78 @@ function lsArrayDirectories() {
     return dirs;
 }
 
-function cd(arg) {
-    if (arg[0] == "/") {
-        if (fileSystem.has(arg)) {
-            if (fileSystem.get(arg).type == "folder") {
-                dir = arg;
-                return "Moved to " + dir;
-            } else {
-                return "Not a folder";
-            }
-        } else {
-            return "Doesn't exist";
-        }
-    } else {
-        var dirs = lsArrayDirectories();
-
-        if (dirs.includes(arg)) {
-            if (dir.endsWith("/")) {
-                dir += arg;
-            } else {
-                dir += "/" + arg;
-            }
-            return "Moved into " + dir;
-        } else if (arg == "..") {
-            if (("" + dir.split("/")).length - 1 > 1) {
-                var dirA = dir.split("/");
-                var newDir = "/";
-                for (var i = 0; i < dirA.length - 1; i++) {
-                    newDir += dirA[i];
+function cd(args) {
+    console.log(JSON.stringify(args));
+    if (args.length == 1 + 1) {
+        var arg = args[1];
+        if (arg[0] == "/") {
+            if (fileSystem.has(arg)) {
+                if (fileSystem.get(arg).type == "folder") {
+                    dir = arg;
+                    return "Moved to " + dir;
+                } else {
+                    return "Not a folder";
                 }
-                dir = newDir;
-
-                return "Moved to " + dir;
             } else {
-                return "Already at root";
+                return "Doesn't exist";
             }
         } else {
-            return "No such directory";
+            var dirs = lsArrayDirectories();
+
+            if (dirs.includes(arg)) {
+                if (dir.endsWith("/")) {
+                    dir += arg;
+                } else {
+                    dir += "/" + arg;
+                }
+                return "Moved into " + dir;
+            } else if (arg == "..") {
+                if (("" + dir.split("/")).length - 1 > 1) {
+                    var dirA = dir.split("/");
+                    var newDir = "/";
+                    for (var i = 0; i < dirA.length - 1; i++) {
+                        newDir += dirA[i];
+                    }
+                    dir = newDir;
+
+                    return "Moved to " + dir;
+                } else {
+                    return "Already at root";
+                }
+            } else {
+                if (lsArrayFiles().includes(arg)) {
+                    return "That is a file, not a directory";
+                }
+                return "No such directory";
+            }
         }
+    } else if (args.length == 1) {
+        dir = "/";
+        return "Moved to /";
+    } else {
+        return "<p style='color: red'>You provided too many arguments</p>";
     }
-    return "Something broke";
 }
 
-function openFile(arg) {
-    var files = lsArrayFiles();
-    if (files.includes(arg)) {
-        var file = dir + "/" + files[files.indexOf(arg)];
-        if (fileSystem.has(file)) {
-            var url = fileSystem.get(file).content;
-            window.open(url);
-            return "Opened in new tab";
+function openFile(args) {
+    if (args.length == 1 + 1) {
+        var arg = args[1];
+        var files = lsArrayFiles();
+        if (files.includes(arg)) {
+            var file = dir + "/" + files[files.indexOf(arg)];
+            if (fileSystem.has(file)) {
+                var url = fileSystem.get(file).content;
+                window.open(url);
+                return "Opened in new tab";
+            } else {
+                return "File system error";
+            }
         } else {
-            return "File system error";
+            return "No such file";
         }
     } else {
-        return "No such file";
+        return "<p style='color: red'>Incorrect number of arguments - open [file]</p>"
     }
-
-    return "Something broke";
 }
 
 const commands = [
@@ -279,15 +292,7 @@ window.addEventListener("keydown", (e) => {
             console.log(command_.command);
             if (command_.command == command) {
                 if (command_.args != false) {
-                    console.log(inputted.split(" ").length - 1 == command_.args);
-                    if (inputted.split(" ").length - 1 == command_.args) {
-                        if (command_.args == 1) {
-                            result = command_.callback(inputted.split(" ")[1]);
-                            found = true;
-                        }
-                    } else {
-                        result = "<p style='color: red'>Incorrect number of arguments: cd requires one argument</p>";
-                    }
+                    result = command_.callback(inputted.split(" "));
                 } else {
                     result = command_.callback();
                 }
