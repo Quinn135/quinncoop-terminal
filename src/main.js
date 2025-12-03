@@ -240,6 +240,10 @@ window.addEventListener("load", () => {
     }
 })
 
+window.addEventListener("resize", () => {
+    window.scrollTo(0, document.body.scrollHeight);
+});
+
 window.addEventListener("keydown", (e) => {
     var updated = false;
 
@@ -261,6 +265,7 @@ window.addEventListener("keydown", (e) => {
         input.classList.remove("cursorAnimate");
         void input.offsetWidth; // random thing to force "reflow"
         input.classList.add("cursorAnimate");
+        window.scrollTo(0, document.body.scrollHeight);
     }
 
     if (e.code == "Enter") {
