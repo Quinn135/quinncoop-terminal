@@ -48,7 +48,7 @@ const fileSystem = new Map([
 ])
 
 function ls() {
-    var returnStr = "<span class='flex flex-row flex-wrap gap-x-3'>";
+    var returnStr = "<span class='flex flex-row flex-wrap gap-x-3'><p style='color: LightGreen'>(folders blue, files white)</p>&nbsp;";
     fileSystem.forEach((elem, path) => {
         if (elem.type == "file") {
             var filePath = path.slice(0, path.indexOf(elem.fileName) - 1);
@@ -253,6 +253,10 @@ window.addEventListener("load", () => {
     }
 })
 
+window.addEventListener("resize", () => {
+    window.scrollTo(0, document.body.scrollHeight);
+});
+
 window.addEventListener("keydown", (e) => {
     var updated = false;
 
@@ -274,6 +278,7 @@ window.addEventListener("keydown", (e) => {
         input.classList.remove("cursorAnimate");
         void input.offsetWidth; // random thing to force "reflow"
         input.classList.add("cursorAnimate");
+        window.scrollTo(0, document.body.scrollHeight);
     }
 
     if (e.code == "Enter") {
@@ -342,5 +347,7 @@ window.addEventListener("keydown", (e) => {
         log.appendChild(divResult);
 
         dirElem.textContent = dir;
+        
+        window.scrollTo(0, document.body.scrollHeight);
     }
 })
