@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="description"
+        content="This is my (Quinn Cooperstein)'s website, has a terminal that you can explore. Has things like my websites etc...">
+    <meta property="og:title" content="quinncoop.com">
+    <meta property="og:description"
+        content="This is my (Quinn Cooperstein)'s website, has a terminal that you can explore. Has things like my websites etc...">
+    <meta property="og:image" content="https://quinncoop.com/quinncoop.png">
+    <meta property="og:url" content="https://quinncoop.com/">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="quinncoop.com">
+    <meta name="twitter:description"
+        content="This is my (Quinn Cooperstein)'s website, has a terminal that you can explore. Has things like my websites etc...">
+    <meta name="twitter:image" content="https://quinncoop.com/quinncoop.png">
+
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Quinn Cooperstein">
+    <link rel="canonical" href="https://quinncoop.com/">
+
+    <link rel="stylesheet" type="text/css" href="/src/style.css">
+    <link rel="icon" href="/favicon.ico">
+    <title>quinncoop</title>
+</head>
+
+<body class="bg-black text-white h-dvh flex flex-col cursor-default z-0">
+    <input type="text" id="hiddenInput" class="bg-white fixed -z-10 opacity-0" aria-hidden="true">
+    <div id="terminal" class="m-0 p-3">
+        <div class="line">Welcome to quinncoop.com</div>
+        <div class="line">Created by Quinn Cooperstein</div>
+        <div class="line"></div>
+        <div class="line">Type "help" for a list of commands</div>
+        <div class="line"></div>
+        <div class="log flex flex-col w-full" id="log">
+        </div>
+        <div class="line flex flex-row"><span class="green">user@quinncoop.com</span>:<span class="blue"
+                id="dir">/</span>&&nbsp;<span class="flex flex-nowrap cursorAnimate" id="input"></span></div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>

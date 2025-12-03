@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Cascadia+Mono:ital,wght@0,200..700;1,200..700&display=swap');
+@import "tailwindcss";
+@import "normalize.css";
+
+body{
+    font-family: "Cascadia Mono", monospace;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+.green{
+    color: #16c60c;
+}
+.blue{
+    color: #3a96dd;
+}
+
+.line{
+    min-height: 1rem;
+    margin-bottom: 0.1rem;
+    white-space: pre-wrap;
+    font-family: inherit;
+}
+
+::selection{
+    color: black;
+    background: hsl(0, 0%, 85%);
+}
+
+#input::after{
+    display: block;
+    content: "";
+    height: 1.15rem;
+    width: 2px;
+    background: white;
+    border-radius: 1px;
+}
+
+.cursorAnimate::after{
+    animation: blink 1000ms 200ms;
+    animation-iteration-count: infinite;
+}
+
+@keyframes blink {
+    0%{
+        opacity: 1;
+    }
+    50%{
+        opacity: 0;
+    }
+    100%{
+        opacity: 1;
+    }
+}
+
+.space{
+    width: 0.8rem;
+    height: 1rem;
+}
