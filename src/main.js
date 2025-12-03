@@ -132,7 +132,7 @@ function cd(args) {
                     dir = arg;
                     return "Moved to " + dir;
                 } else {
-                    return "Not a folder";
+                    return "That is a file, not a directory";
                 }
             } else {
                 return "Doesn't exist";
@@ -347,7 +347,7 @@ window.addEventListener("keydown", (e) => {
         log.appendChild(divResult);
 
         dirElem.textContent = dir;
-        
+
         window.scrollTo(0, document.body.scrollHeight);
     }
 })
