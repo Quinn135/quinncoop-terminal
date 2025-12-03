@@ -20,7 +20,7 @@ const fileSystem = new Map([
     ["/", { type: "folder", children: ["sites"] }],
     ["/sites", { type: "folder", children: ["alloew.com", "quinncoop.com"] }],
     ["/sites/quinncoop.com", { type: "folder", fileName: undefined, children: ["index", "b", "images", "old", "scroll", ""] }],
-    ["/sites/quinncoop.com/index", { type: "file", fileName: "index", content: "https://index.quinncoop.com/" }],
+    ["/sites/quinncoop.com/main", { type: "file", fileName: "main", content: "https://index.quinncoop.com/" }],
     ["/sites/quinncoop.com/b", { type: "file", fileName: "b", content: "https://b.quinncoop.com/" }],
     ["/sites/quinncoop.com/images", { type: "file", fileName: "images", content: "https://imagesquinncoop.com/" }],
     ["/sites/quinncoop.com/old", { type: "file", fileName: "old", content: "https://old.quinncoop.com/" }],
@@ -30,7 +30,7 @@ const fileSystem = new Map([
         type: "folder", fileName: undefined, children: ["index", "airlift", "bob", "confetti", "emoji", "hi", "jacob",
             "shmurplelurplepurple", "spend", "think", "time", "w", "b", "weeb", "words"]
     }],
-    ["/sites/alloew.com/index", { type: "file", fileName: "index", content: "https://alloew.com/" }],
+    ["/sites/alloew.com/main", { type: "file", fileName: "main", content: "https://alloew.com/" }],
     ["/sites/alloew.com/airlift", { type: "file", fileName: "airlift", content: "https://airlift.alloew.com/" }],
     ["/sites/alloew.com/bob", { type: "file", fileName: "bob", content: "https://bob.alloew.com/" }],
     ["/sites/alloew.com/confetti", { type: "file", fileName: "confetti", content: "https://confetti.alloew.com/" }],
@@ -184,7 +184,7 @@ function openFile(arg) {
 }
 
 const commands = [
-    { command: "ls", callback: ls, args: false, description: "lists directory (websites and subsites)" },
+    { command: "ls", callback: ls, args: false, description: "lists directory (folders in blue and files in white)" },
     { command: "cd", argsDesc: "[folder]", callback: cd, args: 1, description: "enter a directory" },
     { command: "open", argsDesc: "[file]", callback: openFile, args: 1, description: "opens a file (opens website in a new tab)" }
 ];
