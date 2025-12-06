@@ -1,7 +1,11 @@
+// import all command functions from "./commands.js"
+// import * as cmd from "./commands.js";
+
 var log = document.getElementById("log");
-var filler = document.getElementById("filler");
+// var filler = document.getElementById("filler");
 var input = document.getElementById("input");
 var dirElem = document.getElementById("dir");
+var helpElem = document.getElementById("help");
 
 var hiddenInput = document.getElementById("hiddenInput");
 
@@ -14,6 +18,7 @@ window.mobileAndTabletCheck = function () {
 };
 
 var logs = [];
+
 var dir = "/";
 
 const fileSystem = new Map([
@@ -44,16 +49,18 @@ const fileSystem = new Map([
     ["/sites/alloew.com/b.html", { type: "file", fileName: "b.html", content: "https://b.alloew.com/" }],
     ["/sites/alloew.com/weeb.html", { type: "file", fileName: "weeb.html", content: "https://weeb.alloew.com/" }],
     ["/sites/alloew.com/words.html", { type: "file", fileName: "words.html", content: "https://words.alloew.com/" }],
+    ["/aboutme.txt", { type: "file", fileName: "aboutme.txt", content: "/aboutme.txt" }]
 
-])
+]);
 
 function ls() {
     var returnStr = "<span class='flex flex-row flex-wrap gap-x-3'><p style='color: LightGreen'>(folders blue, files white)</p>&nbsp;";
     fileSystem.forEach((elem, path) => {
         if (elem.type == "file") {
             var filePath = path.slice(0, path.indexOf(elem.fileName) - 1);
-            console.log(filePath, dir);
-            if (filePath == dir) {
+            console.log(filePath);
+            // console.log(filePath, dir);
+            if (filePath == dir || filePath == "" && dir == "/") {
                 returnStr += `<p>${elem.fileName.replace(`${dir}/`, "")}</p>`;
             }
         } else {
@@ -63,13 +70,23 @@ function ls() {
                     returnStr += `<p class="blue whitespace-pre-wrap">${path.replace(dir + "/", "")}</p>`;
                 }
             } else if (path != dir && elem.type == "folder" && path.split("/").length == dir.split("/").length && path.indexOf(dir) >= 0) {
-                console.log(path);
+                // console.log(path);
                 if (dir.split("/")[1] == "") {
                     returnStr += `<p class="blue whitespace-pre-wrap">${path.replace(dir, "")}</p>`;
                 }
             }
         }
     });
+    // files = lsArrayFiles()
+    // dirs = lsArrayDirectories()
+
+    // dirs.forEach((d) => {
+    //     returnStr += `<p class="blue whitespace-pre-wrap">${d}</p>`;
+    // });
+
+    // files.forEach((f) => {
+    //     returnStr += `<p>${f}</p>`;
+    // });
 
     if (returnStr == "") {
         returnStr == "No folders or files present...";
@@ -85,8 +102,8 @@ function lsArrayFiles() {
     fileSystem.forEach((elem, path) => {
         if (elem.type == "file") {
             var filePath = path.slice(0, path.indexOf(elem.fileName) - 1);
-            console.log(filePath, dir);
-            if (filePath == dir) {
+            // console.log(filePath, dir);
+            if (filePath == dir || filePath == "" && dir == "/") {
                 files.push(elem.fileName.replace(`${dir}/`, ""));
                 // returnStr += `<p>${elem.fileName.replace(`${dir}/`, "")}</p>`;
             }
@@ -110,7 +127,7 @@ function lsArrayDirectories() {
                     // returnStr += `<p class="blue whitespace-pre-wrap">${path.replace(dir + "/", "")}</p>`;
                 }
             } else if (path != dir && elem.type == "folder" && path.split("/").length == dir.split("/").length && path.indexOf(dir) >= 0) {
-                console.log(path);
+                // console.log(path);
                 if (dir.split("/")[1] == "") {
                     dirs.push(path.replace(dir, ""));
                     // returnStr += `<p class="blue whitespace-pre-wrap">${path.replace(dir, "")}</p>`;
@@ -123,7 +140,7 @@ function lsArrayDirectories() {
 }
 
 function cd(args) {
-    console.log(JSON.stringify(args));
+    // console.log(JSON.stringify(args));
     if (args.length == 1 + 1) {
         var arg = args[1];
         if (arg[0] == "/") {
@@ -181,14 +198,27 @@ function openFile(args) {
         var files = lsArrayFiles();
         if (files.includes(arg)) {
             var file = dir + "/" + files[files.indexOf(arg)];
+            if (dir == "/") {
+                file = "/" + files[files.indexOf(arg)];
+            }
             if (fileSystem.has(file)) {
                 var url = fileSystem.get(file).content;
-                window.open(url);
-                return "Opened in new tab";
+                if (file.endsWith(".html")) {
+                    window.open(url);
+                    return "Opened in new tab";
+                } else if (file.endsWith(".txt")) {
+                    if (url.startsWith("/")) {
+                        url = window.location.origin + url;
+                    }
+                    return fetch(url).then(res => res.text()).catch(() => "<p style='color: red'>Failed to load file</p>");
+                }
             } else {
-                return "File system error";
+                return "<p style='color: red'>File system error</p>";
             }
         } else {
+            if (lsArrayDirectories().includes(arg)) {
+                return "<p style='color: red'>That is a directory, not a file</p>";
+            }
             return "No such file";
         }
     } else {
@@ -196,16 +226,24 @@ function openFile(args) {
     }
 }
 
+function clear() {
+    log.innerHTML = "";
+
+    return "";
+}
+
 const commands = [
-    { command: "ls", callback: ls, args: false, description: "lists directory (folders in blue and files in white)" },
-    { command: "cd", argsDesc: "[folder]", callback: cd, args: 1, description: "enter a directory" },
-    { command: "open", argsDesc: "[file]", callback: openFile, args: 1, description: "opens a file (opens website in a new tab)" }
+    { command: "ls", callback: ls, args: false, additionalArgs: [fileSystem], returns: true, description: "lists directory (folders in blue and files in white)" },
+    { command: "cd", argsDesc: "[folder]", callback: cd, args: 1, additionalArgs: [fileSystem], returns: true, description: "enter a directory, leave blank to go to /" },
+    { command: "open", argsDesc: "[file]", callback: openFile, args: 1, additionalArgs: [fileSystem], returns: true, description: "opens a file" },
+    { command: "clear", callback: clear, args: false, returns: false, description: "clears the terminal" },
+    { command: "help", callback: help, args: false, returns: true, description: "lists available commands" }
 ];
 
 function help() {
     var returnStr = "Commands: \n";
 
-    console.log("help");
+    // console.log("help");
 
     var maxCommandLength = 0;
     for (var i = 0; i < commands.length; i++) {
@@ -232,7 +270,7 @@ function help() {
         while ((paddedCommand + additional).length < maxCommandLength) {
             additional += " ";
         }
-        console.log(additional.length);
+        // console.log(additional.length);
         paddedCommand = paddedCommand + additional.replaceAll(" ", "&nbsp;");
 
         returnStr += paddedCommand + " - " + command_.description + "\n";
@@ -241,10 +279,10 @@ function help() {
     return returnStr;
 }
 
-commands.push({ command: "help", callback: help, args: false, description: "lists available commands" });
-
 window.addEventListener("load", () => {
-    input.focus();
+    window.scrollTo(0, document.body.scrollHeight);
+
+    // helpElem.innerHTML = help().replaceAll("\n", "<br>");
 
     if (window.mobileAndTabletCheck()) {
         window.addEventListener("click", () => {
@@ -257,7 +295,21 @@ window.addEventListener("resize", () => {
     window.scrollTo(0, document.body.scrollHeight);
 });
 
-window.addEventListener("keydown", (e) => {
+window.addEventListener("paste", (e) => {
+    e.preventDefault();
+
+    var text = "";
+    if (e.clipboardData || e.originalEvent.clipboardData) {
+        text = (e.originalEvent || e).clipboardData.getData('text/plain');
+    } else if (window.clipboardData) {
+        text = window.clipboardData.getData('Text');
+    }
+
+    input.textContent += text.replaceAll("\n", "").replaceAll("\r", "");
+    window.scrollTo(0, document.body.scrollHeight);
+});
+
+window.addEventListener("keydown", async (e) => {
     var updated = false;
 
     if (!e.ctrlKey && !e.altKey && e.key.length == 1) {
@@ -267,8 +319,52 @@ window.addEventListener("keydown", (e) => {
         e.preventDefault();
     }
 
+    if (e.ctrlKey) {
+        if (e.code == "KeyC") {
+            inputted = input.textContent;
+            logs.push({ time: Date.now(), command: inputted, dir: dir, result: "" });
+
+            var divResult = document.createElement("div");
+            divResult.classList.add("line", "flex", "flex-row", "flex-wrap");
+            // divResult.innerHTML = result.replaceAll("\n", "<br>");
+
+            var div = document.createElement("div");
+            div.classList.add("line", "flex", "flex-row");
+
+            var spanUser = document.createElement("span");
+            spanUser.classList.add("green");
+            spanUser.textContent = "user@quinncoop.com";
+
+            var spanDir = document.createElement("span");
+            spanDir.classList.add("blue");
+            spanDir.textContent = logs[logs.length - 1].dir;
+
+            var spanCommand = document.createElement("span");
+            spanCommand.classList.add("flex", "flex-nowrap");
+            spanCommand.textContent = inputted;
+
+            div.appendChild(spanUser);
+            div.innerHTML += ":";
+            div.appendChild(spanDir);
+            div.innerHTML += "&&nbsp;";
+            div.appendChild(spanCommand);
+
+            input.textContent = "";
+            log.appendChild(div);
+            log.appendChild(divResult);
+
+            dirElem.textContent = dir;
+
+            window.scrollTo(0, document.body.scrollHeight);
+            // } if (e.code == "KeyV") {
+            //     navigator.clipboard.readText().then((text) => {
+            //         input.textContent += text;
+            //     })
+        }
+    }
+
     if (e.code == "Backspace") {
-        console.log("backspace");
+        // console.log("backspace");
         input.textContent = input.textContent.slice(0, input.textContent.length - 1);
         e.preventDefault();
     }
@@ -294,13 +390,26 @@ window.addEventListener("keydown", (e) => {
 
         for (var i = 0; i < commands.length; i++) {
             var command_ = commands[i];
-            console.log(command_.command);
+            // console.log(command_.command);
             if (command_.command == command) {
                 if (command_.args != false) {
-                    result = command_.callback(inputted.split(" "));
+                    if (command_.additionalArgs) {
+                        result = await command_.callback(inputted.split(" "), command_.additionalArgs);
+                    } else {
+                        result = await command_.callback(inputted.split(" "));
+                    }
                 } else {
-                    result = command_.callback();
+                    if (inputted.split(" ").length > 1) {
+                        result = "<p style='color: red'>This command does not take any arguments</p>";
+                    } else {
+                        if (command_.additionalArgs) {
+                            result = await command_.callback(command_.additionalArgs);
+                        } else {
+                            result = await command_.callback();
+                        }
+                    }
                 }
+
                 found = true;
                 break;
             }
@@ -311,42 +420,47 @@ window.addEventListener("keydown", (e) => {
         }
 
         logs[logs.length - 1].result = result;
+        if (command_.returns || !found) {
 
-        // <div class="line flex flex-row">
-        //     <span class="green">user@quinncoop.com</span>:<span class="blue">~</span>&&nbsp;
-        //     <span class="flex flex-nowrap"></span>
-        // </div>
+            // <div class="line flex flex-row">
+            //     <span class="green">user@quinncoop.com</span>:<span class="blue">~</span>&&nbsp;
+            //     <span class="flex flex-nowrap"></span>
+            // </div>
 
-        var divResult = document.createElement("div");
-        divResult.classList.add("line", "flex", "flex-row", "flex-wrap");
-        divResult.innerHTML = result.replaceAll("\n", "<br>");
+            var divResult = document.createElement("div");
+            divResult.classList.add("line", "flex", "flex-row", "flex-wrap");
+            divResult.innerHTML = result.replaceAll("\n", "<br>");
 
-        var div = document.createElement("div");
-        div.classList.add("line", "flex", "flex-row");
+            var div = document.createElement("div");
+            div.classList.add("line", "flex", "flex-row");
 
-        var spanUser = document.createElement("span");
-        spanUser.classList.add("green");
-        spanUser.textContent = "user@quinncoop.com";
+            var spanUser = document.createElement("span");
+            spanUser.classList.add("green");
+            spanUser.textContent = "user@quinncoop.com";
 
-        var spanDir = document.createElement("span");
-        spanDir.classList.add("blue");
-        spanDir.textContent = logs[logs.length - 1].dir;
+            var spanDir = document.createElement("span");
+            spanDir.classList.add("blue");
+            spanDir.textContent = logs[logs.length - 1].dir;
 
-        var spanCommand = document.createElement("span");
-        spanCommand.classList.add("flex", "flex-nowrap");
-        spanCommand.textContent = inputted;
+            var spanCommand = document.createElement("span");
+            spanCommand.classList.add("flex", "flex-nowrap");
+            spanCommand.textContent = inputted;
 
-        div.appendChild(spanUser);
-        div.innerHTML += ":";
-        div.appendChild(spanDir);
-        div.innerHTML += "&&nbsp;";
-        div.appendChild(spanCommand);
+            div.appendChild(spanUser);
+            div.innerHTML += ":";
+            div.appendChild(spanDir);
+            div.innerHTML += "&&nbsp;";
+            div.appendChild(spanCommand);
 
-        input.textContent = "";
-        log.appendChild(div);
-        log.appendChild(divResult);
+            input.textContent = "";
+            log.appendChild(div);
+            log.appendChild(divResult);
 
-        dirElem.textContent = dir;
+            dirElem.textContent = dir;
+        } else {
+            input.textContent = "";
+            dirElem.textContent = dir;
+        }
 
         window.scrollTo(0, document.body.scrollHeight);
     }

@@ -29,19 +29,27 @@
     <title>quinncoop</title>
 </head>
 
-<body class="bg-black text-white h-dvh flex flex-col cursor-default z-0">
+<body class="text-white h-dvh flex flex-col cursor-default z-0" style="background: hsl(240, 4%, 6%);">
     <input type="text" id="hiddenInput" class="bg-white fixed -z-10 opacity-0" aria-hidden="true">
-    <div id="terminal" class="m-0 p-3">
+    <div class="toolbar h-10 flex flex-row items-center px-2.5 fixed top-0 left-0 right-0"
+        style="background: hsl(240, 4%, 6%);">
+        <a href="/" class="flex flex-row flex-nowrap text-nowrap">
+            <img src="quinncoop.png" alt="quinncoop.com q logo" class="w-5 h-5">uinncoop.com
+        </a>
+    </div>
+    <div id="terminal" class="m-0 p-3 rounded bg-black" style="padding-top: 3.25rem;">
         <div class="line">Welcome to quinncoop.com</div>
         <div class="line">Created by Quinn Cooperstein</div>
         <div class="line"></div>
-        <div class="line">Type "help" for a list of commands</div>
+        <div class="line">Version {version}</div>
         <div class="line"></div>
         <div class="log flex flex-col w-full" id="log">
+            <!-- replace -->
         </div>
         <div class="line flex flex-row"><span class="green">user@quinncoop.com</span>:<span class="blue"
                 id="dir">/</span>&&nbsp;<span class="flex flex-nowrap cursorAnimate" id="input"></span></div>
     </div>
+    <div class="filler h-full bg-black"></div>
     <script type="module" src="/src/main.js"></script>
 </body>
 
