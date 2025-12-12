@@ -244,13 +244,15 @@ function clear() {
 }
 
 function toggleDvd() {
-    dvd.hidden = !dvd.hidden;
     x = 0;
     y = 0;
     dx = Math.abs(dx);
     dy = Math.abs(dy);
     nowColor = 0;
     dvd.style.background = colors[nowColor];
+    dvd.style.left = x;
+    dvd.style.top = y;
+    dvd.hidden = !dvd.hidden;
 
     return "The dvd thing is now " + (dvd.hidden ? "off" : "on");
 }
