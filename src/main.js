@@ -7,6 +7,14 @@ var input = document.getElementById("input");
 var dirElem = document.getElementById("dir");
 var helpElem = document.getElementById("help");
 
+var dvd = document.getElementById("dvd");
+var x = 0;
+var y = 0;
+var dx = 3;
+var dy = 3;
+const colors = ["red", "blue", "green", "yellow", "purple", "cyan", "magenta", "orange", "lime", "pink"];
+var nowColor = 0;
+
 var hiddenInput = document.getElementById("hiddenInput");
 
 var cursorPos = 0;
@@ -18,6 +26,9 @@ window.mobileAndTabletCheck = function () {
 };
 
 var logs = [];
+var logsCrude = [""];
+var logIndex = 0;
+var logRefIndex = logIndex;
 
 var dir = "/";
 
@@ -232,12 +243,25 @@ function clear() {
     return "";
 }
 
+function toggleDvd() {
+    dvd.hidden = !dvd.hidden;
+    x = 0;
+    y = 0;
+    dx = Math.abs(dx);
+    dy = Math.abs(dy);
+    nowColor = 0;
+    dvd.style.background = colors[nowColor];
+
+    return "The dvd thing is now " + (dvd.hidden ? "off" : "on");
+}
+
 const commands = [
     { command: "ls", callback: ls, args: false, additionalArgs: [fileSystem], returns: true, description: "lists directory (folders in blue and files in white)" },
     { command: "cd", argsDesc: "[folder]", callback: cd, args: 1, additionalArgs: [fileSystem], returns: true, description: "enter a directory, leave blank to go to /" },
     { command: "open", argsDesc: "[file]", callback: openFile, args: 1, additionalArgs: [fileSystem], returns: true, description: "opens a file" },
     { command: "clear", callback: clear, args: false, returns: false, description: "clears the terminal" },
-    { command: "help", callback: help, args: false, returns: true, description: "lists available commands" }
+    { command: "help", callback: help, args: false, returns: true, description: "lists available commands" },
+    { command: "dvd", callback: toggleDvd, args: false, returns: true, description: "toggles the dvd thing" }
 ];
 
 function help() {
@@ -305,7 +329,10 @@ window.addEventListener("paste", (e) => {
         text = window.clipboardData.getData('Text');
     }
 
+
     input.textContent += text.replaceAll("\n", "").replaceAll("\r", "");
+    logsCrude[logIndex] = input.textContent;
+    logRefIndex = logIndex;
     window.scrollTo(0, document.body.scrollHeight);
 });
 
@@ -314,6 +341,8 @@ window.addEventListener("keydown", async (e) => {
 
     if (!e.ctrlKey && !e.altKey && e.key.length == 1) {
         input.textContent += e.key;
+        logsCrude[logIndex] = input.textContent;
+        logRefIndex = logIndex;
         updated = true;
         cursorPos++;
         e.preventDefault();
@@ -322,6 +351,11 @@ window.addEventListener("keydown", async (e) => {
     if (e.ctrlKey) {
         if (e.code == "KeyC") {
             inputted = input.textContent;
+            logsCrude[logIndex] = "";
+            logRefIndex = logIndex;
+            logsCrude.push("");
+            logIndex++;
+
             logs.push({ time: Date.now(), command: inputted, dir: dir, result: "" });
 
             var divResult = document.createElement("div");
@@ -363,9 +397,17 @@ window.addEventListener("keydown", async (e) => {
         }
     }
 
+    if (e.code == "ArrowUp") {
+        // if (logRefIndex - 1 > logsCrude.length - 1) {
+        //     logRefIndex--;
+        //     input.textContent = logsCrude[logRefIndex];
+        // }
+    }
+
     if (e.code == "Backspace") {
         // console.log("backspace");
         input.textContent = input.textContent.slice(0, input.textContent.length - 1);
+        logsCrude[logIndex] = input.textContent;
         e.preventDefault();
     }
 
@@ -381,6 +423,9 @@ window.addEventListener("keydown", async (e) => {
         e.preventDefault();
 
         var inputted = input.textContent;
+        logsCrude[logIndex] = input.textContent;
+        logsCrude.push("");
+        logIndex++;
         var command = inputted.split(" ")[0].toLowerCase();
 
         var result = "";
@@ -465,3 +510,34 @@ window.addEventListener("keydown", async (e) => {
         window.scrollTo(0, document.body.scrollHeight);
     }
 })
+
+window.setInterval(() => {
+    const maxX = window.innerWidth - 100;
+    const maxY = window.innerHeight - 100;
+
+    var tempDX = dx;
+    var tempDY = dy;
+
+    if (x + dx > maxX) {
+        dx = -Math.abs(dx);
+    } if (x + dx < 0) {
+        dx = Math.abs(dx);
+    } if (y + dy > maxY) {
+        dy = -dy;
+        nowColor = (nowColor + 1) % colors.length;
+        dvd.style.backgroundColor = colors[nowColor];
+    } if (y + dy < 0) {
+        dy = Math.abs(dy);
+    }
+
+    if (dx != tempDX || dy != tempDY) {
+        nowColor = (nowColor + 1) % colors.length;
+        dvd.style.backgroundColor = colors[nowColor];
+    }
+
+    x += dx;
+    y += dy;
+
+    dvd.style.left = x + "px";
+    dvd.style.top = y + "px";
+}, 10);
