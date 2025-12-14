@@ -4,8 +4,11 @@
 var log = document.getElementById("log");
 // var filler = document.getElementById("filler");
 var input = document.getElementById("input");
+var cursor = document.getElementById("cursor");
 var dirElem = document.getElementById("dir");
 var helpElem = document.getElementById("help");
+
+const cursorStr = `<span class="inline-block cursorAnimate cursor" id="cursor"></span><span class="loader" id="loader" hidden="true"></span>`;
 
 var dvd = document.getElementById("dvd");
 var x = 0;
@@ -32,11 +35,13 @@ var logRefIndex = logIndex;
 
 var dir = "/";
 
+var processing = false;
+
 const fileSystem = new Map([
     ["/", { type: "folder" }],
     ["/sites", { type: "folder" }],
     ["/sites/quinncoop.com", { type: "folder", fileName: undefined, children: ["index", "b", "images", "old", "scroll", ""] }],
-    ["/sites/quinncoop.com/index.html", { type: "file", fileName: "index.html", content: "https://quinncoop.com/" }],
+    ["/sites/quinncoop.html", { type: "file", fileName: "quinncoop.html", content: "https://quinncoop.com/" }],
     ["/sites/quinncoop.com/b.html", { type: "file", fileName: "b.html", content: "https://b.quinncoop.com/" }],
     ["/sites/quinncoop.com/images.html", { type: "file", fileName: "images.html", content: "https://images.quinncoop.com/" }],
     ["/sites/quinncoop.com/old.html", { type: "file", fileName: "old.html", content: "https://old.quinncoop.com/" }],
@@ -45,7 +50,7 @@ const fileSystem = new Map([
     ["/sites/alloew.com", {
         type: "folder", fileName: undefined
     }],
-    ["/sites/alloew.com/index.html", { type: "file", fileName: "index.html", content: "https://alloew.com/" }],
+    ["/sites/alloew.html", { type: "file", fileName: "alloew.html", content: "https://alloew.com/" }],
     ["/sites/alloew.com/airlift.html", { type: "file", fileName: "airlift.html", content: "https://airlift.alloew.com/" }],
     ["/sites/alloew.com/bob.html", { type: "file", fileName: "bob.html", content: "https://bob.alloew.com/" }],
     ["/sites/alloew.com/confetti.html", { type: "file", fileName: "confetti.html", content: "https://confetti.alloew.com/" }],
@@ -65,7 +70,7 @@ const fileSystem = new Map([
 ]);
 
 function ls() {
-    var returnStr = "<span class='flex flex-row flex-wrap gap-x-3'><p style='color: LightGreen'>(folders blue, files white)</p>&nbsp;";
+    var returnStr = "<span class='flex flex-row flex-wrap gap-x-3'><p style='color: #fbcfa0' class='w-full'>folders are blue, files are white:</p>";
     fileSystem.forEach((elem, path) => {
         if (elem.type == "file") {
             var filePath = path.slice(0, path.indexOf(elem.fileName) - 1);
@@ -221,7 +226,7 @@ function openFile(args) {
                     if (url.startsWith("/")) {
                         url = window.location.origin + url;
                     }
-                    return fetch(url).then(res => res.text()).catch(() => "<p style='color: red'>Failed to load file</p>");
+                    return fetch("https://alloew.com/").then(res => res.text()).catch(() => "<p style='color: red'>Failed to load file</p>");
                 }
             } else {
                 return "<p style='color: red'>File system error</p>";
@@ -324,25 +329,27 @@ window.addEventListener("resize", () => {
 window.addEventListener("paste", (e) => {
     e.preventDefault();
 
-    var text = "";
-    if (e.clipboardData || e.originalEvent.clipboardData) {
-        text = (e.originalEvent || e).clipboardData.getData('text/plain');
-    } else if (window.clipboardData) {
-        text = window.clipboardData.getData('Text');
+    if (!processing) {
+        var text = "";
+        if (e.clipboardData || e.originalEvent.clipboardData) {
+            text = (e.originalEvent || e).clipboardData.getData('text/plain');
+        } else if (window.clipboardData) {
+            text = window.clipboardData.getData('Text');
+        }
+
+
+        input.innerHTML = input.textContent + text.replaceAll("\n", "").replaceAll("\r", "") + cursorStr;
+        logsCrude[logIndex] = input.textContent;
+        logRefIndex = logIndex;
+        window.scrollTo(0, document.body.scrollHeight);
     }
-
-
-    input.textContent += text.replaceAll("\n", "").replaceAll("\r", "");
-    logsCrude[logIndex] = input.textContent;
-    logRefIndex = logIndex;
-    window.scrollTo(0, document.body.scrollHeight);
 });
 
 window.addEventListener("keydown", async (e) => {
     var updated = false;
 
-    if (!e.ctrlKey && !e.altKey && e.key.length == 1) {
-        input.textContent += e.key;
+    if (!e.ctrlKey && !e.altKey && e.key.length == 1 && !processing) {
+        input.innerHTML = input.textContent + e.key + cursorStr;
         logsCrude[logIndex] = input.textContent;
         logRefIndex = logIndex;
         updated = true;
@@ -350,7 +357,7 @@ window.addEventListener("keydown", async (e) => {
         e.preventDefault();
     }
 
-    if (e.ctrlKey) {
+    if (e.ctrlKey && !processing) {
         if (e.code == "KeyC") {
             inputted = input.textContent;
             logsCrude[logIndex] = "";
@@ -360,23 +367,23 @@ window.addEventListener("keydown", async (e) => {
 
             logs.push({ time: Date.now(), command: inputted, dir: dir, result: "" });
 
-            var divResult = document.createElement("div");
-            divResult.classList.add("line", "flex", "flex-row", "flex-wrap");
+            // var divResult = document.createElement("div");
+            // divResult.classList.add("line", "flex", "flex-row", "flex-wrap");
             // divResult.innerHTML = result.replaceAll("\n", "<br>");
 
             var div = document.createElement("div");
-            div.classList.add("line", "flex", "flex-row");
+            div.classList.add("line", "inline-block", "text-nowrap");
 
             var spanUser = document.createElement("span");
-            spanUser.classList.add("green");
+            spanUser.classList.add("green", "text-nowrap");
             spanUser.textContent = "user@quinncoop.com";
 
             var spanDir = document.createElement("span");
-            spanDir.classList.add("blue");
+            spanDir.classList.add("blue", "text-nowrap");
             spanDir.textContent = logs[logs.length - 1].dir;
 
             var spanCommand = document.createElement("span");
-            spanCommand.classList.add("flex", "flex-nowrap");
+            spanCommand.classList.add("inline-block", "wrap-anywhere");
             spanCommand.textContent = inputted;
 
             div.appendChild(spanUser);
@@ -385,9 +392,9 @@ window.addEventListener("keydown", async (e) => {
             div.innerHTML += "&&nbsp;";
             div.appendChild(spanCommand);
 
-            input.textContent = "";
+            input.innerHTML = cursorStr;
             log.appendChild(div);
-            log.appendChild(divResult);
+            // log.appendChild(divResult);
 
             dirElem.textContent = dir;
 
@@ -406,22 +413,22 @@ window.addEventListener("keydown", async (e) => {
         // }
     }
 
-    if (e.code == "Backspace") {
+    if (e.code == "Backspace" && !processing) {
         // console.log("backspace");
-        input.textContent = input.textContent.slice(0, input.textContent.length - 1);
+        input.innerHTML = input.textContent.slice(0, input.textContent.length - 1) + cursorStr;
         logsCrude[logIndex] = input.textContent;
         e.preventDefault();
     }
 
     if (updated) {
         // Cursor white
-        input.classList.remove("cursorAnimate");
-        void input.offsetWidth; // random thing to force "reflow"
-        input.classList.add("cursorAnimate");
+        cursor.classList.remove("cursorAnimate");
+        void cursor.offsetWidth; // random thing to force "reflow"
+        cursor.classList.add("cursorAnimate");
         window.scrollTo(0, document.body.scrollHeight);
     }
 
-    if (e.code == "Enter") {
+    if (e.code == "Enter" && !processing) {
         e.preventDefault();
 
         var inputted = input.textContent;
@@ -441,8 +448,12 @@ window.addEventListener("keydown", async (e) => {
             if (command_.command == command) {
                 if (command_.args != false) {
                     if (command_.additionalArgs) {
+                        processing = true;
+                        document.getElementById("loader").hidden = false;
                         result = await command_.callback(inputted.split(" "), command_.additionalArgs);
                     } else {
+                        processing = true;
+                        document.getElementById("loader").hidden = false;
                         result = await command_.callback(inputted.split(" "));
                     }
                 } else {
@@ -450,8 +461,12 @@ window.addEventListener("keydown", async (e) => {
                         result = "<p style='color: red'>This command does not take any arguments</p>";
                     } else {
                         if (command_.additionalArgs) {
+                            processing = true;
+                            document.getElementById("loader").hidden = false;
                             result = await command_.callback(command_.additionalArgs);
                         } else {
+                            processing = true;
+                            document.getElementById("loader").hidden = false;
                             result = await command_.callback();
                         }
                     }
@@ -475,22 +490,22 @@ window.addEventListener("keydown", async (e) => {
             // </div>
 
             var divResult = document.createElement("div");
-            divResult.classList.add("line", "flex", "flex-row", "flex-wrap");
-            divResult.innerHTML = result.replaceAll("\n", "<br>");
+            divResult.classList.add("line", "inline-block", "wrap-anywhere");
+            divResult.innerHTML = result;
 
             var div = document.createElement("div");
-            div.classList.add("line", "flex", "flex-row");
+            div.classList.add("line", "inline-block");
 
             var spanUser = document.createElement("span");
-            spanUser.classList.add("green");
+            spanUser.classList.add("green", "text-nowrap");
             spanUser.textContent = "user@quinncoop.com";
 
             var spanDir = document.createElement("span");
-            spanDir.classList.add("blue");
+            spanDir.classList.add("blue", "text-nowrap");
             spanDir.textContent = logs[logs.length - 1].dir;
 
             var spanCommand = document.createElement("span");
-            spanCommand.classList.add("flex", "flex-nowrap");
+            spanCommand.classList.add("inline-block", "wrap-anywhere");
             spanCommand.textContent = inputted;
 
             div.appendChild(spanUser);
@@ -499,47 +514,51 @@ window.addEventListener("keydown", async (e) => {
             div.innerHTML += "&&nbsp;";
             div.appendChild(spanCommand);
 
-            input.textContent = "";
+            input.innerHTML = cursorStr;
             log.appendChild(div);
             log.appendChild(divResult);
 
             dirElem.textContent = dir;
         } else {
-            input.textContent = "";
+            input.innerHTML = cursorStr;
             dirElem.textContent = dir;
         }
 
+        processing = false;
+        document.getElementById("loader").hidden = true;
         window.scrollTo(0, document.body.scrollHeight);
     }
 })
 
 window.setInterval(() => {
-    const maxX = window.innerWidth - 100;
-    const maxY = window.innerHeight - 100;
+    if (!dvd.hidden) {
+        const maxX = window.innerWidth - 100;
+        const maxY = window.innerHeight - 100;
 
-    var tempDX = dx;
-    var tempDY = dy;
+        var tempDX = dx;
+        var tempDY = dy;
 
-    if (x + dx > maxX) {
-        dx = -Math.abs(dx);
-    } if (x + dx < 0) {
-        dx = Math.abs(dx);
-    } if (y + dy > maxY) {
-        dy = -dy;
-        nowColor = (nowColor + 1) % colors.length;
-        dvd.style.backgroundColor = colors[nowColor];
-    } if (y + dy < 0) {
-        dy = Math.abs(dy);
+        if (x + dx > maxX) {
+            dx = -Math.abs(dx);
+        } if (x + dx < 0) {
+            dx = Math.abs(dx);
+        } if (y + dy > maxY) {
+            dy = -dy;
+            nowColor = (nowColor + 1) % colors.length;
+            dvd.style.backgroundColor = colors[nowColor];
+        } if (y + dy < 0) {
+            dy = Math.abs(dy);
+        }
+
+        if (dx != tempDX || dy != tempDY) {
+            nowColor = (nowColor + 1) % colors.length;
+            dvd.style.backgroundColor = colors[nowColor];
+        }
+
+        x += dx;
+        y += dy;
+
+        dvd.style.left = x + "px";
+        dvd.style.top = y + "px";
     }
-
-    if (dx != tempDX || dy != tempDY) {
-        nowColor = (nowColor + 1) % colors.length;
-        dvd.style.backgroundColor = colors[nowColor];
-    }
-
-    x += dx;
-    y += dy;
-
-    dvd.style.left = x + "px";
-    dvd.style.top = y + "px";
 }, 10);
