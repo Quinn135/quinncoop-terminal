@@ -42,6 +42,7 @@ const fileSystem = new Map([
     ["/sites", { type: "folder" }],
     ["/sites/quinncoop.com", { type: "folder", fileName: undefined, children: ["index", "b", "images", "old", "scroll", ""] }],
     ["/sites/quinncoop.html", { type: "file", fileName: "quinncoop.html", content: "https://quinncoop.com/" }],
+    ["/sites/quinncoop.com/p.html", { type: "file", fileName: "p.html", content: "https://p.quinncoop.com/" }],
     ["/sites/quinncoop.com/b.html", { type: "file", fileName: "b.html", content: "https://b.quinncoop.com/" }],
     ["/sites/quinncoop.com/images.html", { type: "file", fileName: "images.html", content: "https://images.quinncoop.com/" }],
     ["/sites/quinncoop.com/old.html", { type: "file", fileName: "old.html", content: "https://old.quinncoop.com/" }],
