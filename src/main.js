@@ -227,7 +227,7 @@ function openFile(args) {
                     if (url.startsWith("/")) {
                         url = window.location.origin + url;
                     }
-                    return fetch("https://alloew.com/").then(res => res.text()).catch(() => "<p style='color: red'>Failed to load file</p>");
+                    return fetch("https://quinncoop.com/").then(res => res.text()).catch(() => "<p style='color: red'>Failed to load file</p>");
                 }
             } else {
                 return "<p style='color: red'>File system error</p>";
