@@ -8,6 +8,8 @@ var cursor = document.getElementById("cursor");
 var dirElem = document.getElementById("dir");
 var helpElem = document.getElementById("help");
 
+document.getElementById("img").src = "img.jpg?" + new Date().getTime();
+
 const cursorStr = `<span class="inline-block cursorAnimate cursor" id="cursor"></span><span class="loader" id="loader" hidden="true"></span>`;
 
 var dvd = document.getElementById("dvd");
